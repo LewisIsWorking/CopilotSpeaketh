@@ -1,0 +1,84 @@
+{
+  "name": "copilot-speaketh",
+  "displayName": "Copilot Speaketh",
+  "description": "Reads GitHub Copilot Chat replies aloud automatically, cross-platform (macOS + Windows).",
+  "version": "0.1.0",
+  "publisher": "lewisisworking",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LewisIsWorking/CopilotSpeaketh"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "copilotSpeaketh.toggle",
+        "title": "Copilot Speaketh: Toggle reading on/off"
+      },
+      {
+        "command": "copilotSpeaketh.speakLast",
+        "title": "Copilot Speaketh: Speak the last reply now"
+      },
+      {
+        "command": "copilotSpeaketh.stop",
+        "title": "Copilot Speaketh: Stop speaking"
+      }
+    ],
+    "configuration": {
+      "title": "Copilot Speaketh",
+      "properties": {
+        "copilotSpeaketh.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically read new Copilot Chat replies aloud."
+        },
+        "copilotSpeaketh.voice": {
+          "type": "string",
+          "default": "",
+          "description": "Voice name. macOS examples: Moira (Irish), Samantha. Windows examples: Microsoft Hazel Desktop. Leave blank for the system default."
+        },
+        "copilotSpeaketh.rate": {
+          "type": "number",
+          "default": 0,
+          "description": "Speaking rate. macOS: words-per-minute offset added to ~175 (e.g. 40 = faster). Windows SAPI: -10..10."
+        },
+        "copilotSpeaketh.maxChars": {
+          "type": "number",
+          "default": 0,
+          "description": "Maximum characters to read per reply. 0 = read the entire reply."
+        },
+        "copilotSpeaketh.skipCodeBlocks": {
+          "type": "boolean",
+          "default": true,
+          "description": "Skip fenced code blocks when reading (reading code aloud is usually noise)."
+        },
+        "copilotSpeaketh.readThinking": {
+          "type": "boolean",
+          "default": false,
+          "description": "Also read Copilot's 'thinking' reasoning blocks (off by default)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile",
+    "verify": "node scripts/verify-parser.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.4.0"
+  }
+}
