@@ -5,9 +5,29 @@
   "version": "0.1.0",
   "publisher": "lewisisworking",
   "license": "MIT",
+  "icon": "icon.png",
+  "preview": true,
+  "pricing": "Free",
+  "galleryBanner": {
+    "color": "#0d1b2a",
+    "theme": "dark"
+  },
+  "keywords": [
+    "copilot",
+    "text to speech",
+    "tts",
+    "read aloud",
+    "accessibility",
+    "speech",
+    "voice"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/LewisIsWorking/CopilotSpeaketh"
+  },
+  "homepage": "https://github.com/LewisIsWorking/CopilotSpeaketh#readme",
+  "bugs": {
+    "url": "https://github.com/LewisIsWorking/CopilotSpeaketh/issues"
   },
   "engines": {
     "vscode": "^1.90.0"
@@ -15,6 +35,19 @@
   "categories": [
     "Other"
   ],
+  "extensionKind": [
+    "ui"
+  ],
+  "capabilities": {
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "Needs a real filesystem to read Copilot's on-disk chat sessions."
+    },
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Runs the OS text-to-speech command (say / PowerShell), so it only activates in trusted workspaces."
+    }
+  },
   "main": "./out/extension.js",
   "activationEvents": [
     "onStartupFinished"
@@ -23,15 +56,18 @@
     "commands": [
       {
         "command": "copilotSpeaketh.toggle",
-        "title": "Copilot Speaketh: Toggle reading on/off"
+        "title": "Toggle reading on/off",
+        "category": "Copilot Speaketh"
       },
       {
         "command": "copilotSpeaketh.speakLast",
-        "title": "Copilot Speaketh: Speak the last reply now"
+        "title": "Speak the last reply now",
+        "category": "Copilot Speaketh"
       },
       {
         "command": "copilotSpeaketh.stop",
-        "title": "Copilot Speaketh: Stop speaking"
+        "title": "Stop speaking",
+        "category": "Copilot Speaketh"
       }
     ],
     "configuration": {
@@ -74,7 +110,8 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "vscode:prepublish": "npm run compile",
-    "verify": "node scripts/verify-parser.mjs"
+    "verify": "node scripts/verify-parser.mjs",
+    "test": "node --test test/parser.test.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

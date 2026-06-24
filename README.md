@@ -41,6 +41,7 @@ Verify the parser against your *real* Copilot chats without launching VS Code:
 
 ```bash
 npm run verify   # prints what would be spoken for your 8 most-recent sessions
+npm test         # unit tests for the parser + speech cleaner (run compile first)
 ```
 
 ### Verifying on macOS
@@ -50,6 +51,16 @@ npm run verify   # prints what would be spoken for your 8 most-recent sessions
    and your sessions parse. (Expect text from recent Copilot chats.)
 3. Press **F5**, open a folder in the dev-host window, chat with Copilot → the reply is
    read aloud by `say`. Try `copilotSpeaketh.voice: "Moira"` for the Irish voice.
+
+## Troubleshooting
+
+- **No sound?** Check `View → Output → Copilot Speaketh` — it logs each reply it speaks
+  and any engine error. If the OS voice can't start, you'll get a one-time warning.
+- **Wrong/silent voice?** Set `copilotSpeaketh.voice` to an installed voice (macOS: run
+  `say -v '?'` to list; Windows: any SAPI voice name, e.g. `Microsoft Hazel Desktop`).
+- **Nothing happens at all?** Open a **folder/workspace** (Copilot writes chats per
+  workspace) and make sure the workspace is **trusted** — the extension stays inactive in
+  untrusted or virtual workspaces, and in Remote/Codespaces.
 
 ## Caveats
 

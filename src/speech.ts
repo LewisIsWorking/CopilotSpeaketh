@@ -21,6 +21,13 @@ export class Speaker {
     private current: ChildProcess | undefined;
     private currentTextFile: string | undefined;
 
+    /** @param onError reports a failed/missing voice engine (called at most per utterance). */
+    constructor(private readonly onError?: (message: string) => void) {}
+
+    private get engineName(): string {
+        return process.platform === "darwin" ? "macOS 'say'" : "Windows PowerShell SAPI";
+    }
+
     /** Speak text now, interrupting anything already playing. */
     speak(text: string, opts: SpeechOptions): void {
         const trimmed = (text ?? "").trim();
@@ -42,8 +49,17 @@ export class Speaker {
 
         this.current = child;
         const cleanup = () => this.cleanupFile(file);
-        child.on("exit", cleanup);
-        child.on("error", cleanup);
+        child.on("error", err => {
+            this.onError?.(`${this.engineName} could not start: ${err.message}`);
+            cleanup();
+        });
+        child.on("exit", (code) => {
+            // Ignore null (we killed it for latest-wins); report genuine failures.
+            if (!child.killed && code) {
+                this.onError?.(`${this.engineName} exited with code ${code}.`);
+            }
+            cleanup();
+        });
     }
 
     /** Stop any current utterance. */

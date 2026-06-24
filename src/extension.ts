@@ -14,9 +14,21 @@ import { Speaker } from "./speech";
 import { SpokenTracker } from "./spokenTracker";
 import { StatusBar } from "./statusBar";
 import { SessionWatcher } from "./watcher";
+import { initLog, log, disposeLog } from "./log";
 
 export function activate(context: vscode.ExtensionContext): void {
-    const speaker = new Speaker();
+    initLog();
+    log("Copilot Speaketh activated.");
+
+    // Surface a missing/broken voice engine once, so it isn't silently dead.
+    let warnedEngine = false;
+    const speaker = new Speaker(message => {
+        log("ENGINE ERROR: " + message);
+        if (!warnedEngine) {
+            warnedEngine = true;
+            vscode.window.showWarningMessage("Copilot Speaketh: " + message);
+        }
+    });
     const tracker = new SpokenTracker();
     const statusBar = new StatusBar();
     statusBar.update(readConfig().enabled);
@@ -44,11 +56,14 @@ export function activate(context: vscode.ExtensionContext): void {
             if (!turn.complete) { return; }
             if (!turn.text.trim()) { return; }
             if (!tracker.markIfNew(sessionId, turn.requestId)) { return; }
+            log(`Speaking ${turn.text.length} chars from session ${sessionId.slice(0, 8)}.`);
             speakTurn(turn);
         });
         watcher.start();
+        log("Watching: " + chatSessionsDir);
         context.subscriptions.push({ dispose: () => watcher?.dispose() });
     } else {
+        log("No folder/workspace open -- nothing to watch.");
         vscode.window.setStatusBarMessage(
             "Copilot Speaketh: open a folder/workspace to read its Copilot chats.",
             8000
@@ -85,4 +100,5 @@ export function activate(context: vscode.ExtensionContext): void {
 
 export function deactivate(): void {
     // subscriptions (watcher, speaker.stop) are disposed by VS Code.
+    disposeLog();
 }
