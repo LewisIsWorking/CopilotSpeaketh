@@ -2,7 +2,7 @@
   "name": "copilot-speaketh",
   "displayName": "Copilot Speaketh",
   "description": "Reads GitHub Copilot Chat replies aloud automatically, cross-platform (macOS + Windows).",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "lewisisworking",
   "license": "MIT",
   "icon": "icon.png",

@@ -36,7 +36,14 @@ function isThinkingPart(part: any): boolean {
     return part && part.kind === "thinking" && typeof part.value === "string";
 }
 
-/** Join the assistant's spoken prose (and optionally thinking) from a request. */
+/**
+ * Join the assistant's spoken prose (and optionally thinking) from a request.
+ * Fragments are joined with a SPACE, not a blank line: Copilot splits a single
+ * sentence into separate prose parts around inline references (e.g.
+ * "...who calls " | <symbol> | ": ..."), and the skipped reference would
+ * otherwise leave a "\n\n" that reads as a false sentence stop. Real paragraph
+ * breaks live as "\n\n" *inside* a single part's value and survive this join.
+ */
 export function extractProse(request: any, opts: ParseOptions): string {
     const response = Array.isArray(request?.response) ? request.response : [];
     const chunks: string[] = [];
@@ -47,7 +54,7 @@ export function extractProse(request: any, opts: ParseOptions): string {
             chunks.push(part.value);
         }
     }
-    return chunks.join("\n\n");
+    return chunks.join(" ");
 }
 
 /** A turn is complete once VS Code has stamped its timing/result. */

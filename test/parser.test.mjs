@@ -70,3 +70,27 @@ test("cleanForSpeech respects maxChars", () => {
     const out = cleanForSpeech("word ".repeat(100), { ...OPTS, maxChars: 20 });
     assert.ok(out.length <= 23, `expected <=23, got ${out.length}`);
 });
+
+test("cleanForSpeech skips box-drawing tables", () => {
+    const c = String.fromCharCode;
+    const table = c(0x250C, 0x2500, 0x2510) + "\n"
+        + c(0x2502) + " Slice " + c(0x2502) + " PR " + c(0x2502) + "\n"
+        + c(0x2514, 0x2500, 0x2518);
+    const out = cleanForSpeech("Before the table.\n" + table + "\nAfter the table.", OPTS);
+    assert.match(out, /Before the table/);
+    assert.match(out, /After the table/);
+    assert.doesNotMatch(out, /Slice/, "table cell text must be skipped");
+});
+
+test("cleanForSpeech applies pronunciation fixes", () => {
+    assert.match(cleanForSpeech("~10 minutes", OPTS), /about 10 minutes/);
+    assert.match(cleanForSpeech("PF2e and SF2e", OPTS), /Pathfinder and Starfinder/);
+    assert.match(cleanForSpeech("foo vs. bar", OPTS), /foo versus bar/);
+    assert.match(cleanForSpeech("e.g. this", OPTS), /for example/);
+});
+
+test("cleanForSpeech treats a soft wrap as a space, not a sentence stop", () => {
+    const out = cleanForSpeech("it is never called, so\nit stays at 0", OPTS);
+    assert.match(out, /so it stays at 0/);
+    assert.doesNotMatch(out, /so\. /, "a single newline must not become a false stop");
+});
